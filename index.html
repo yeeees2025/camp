@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  리부트 울산 로컬 창업캠프 · 태화동 내 가게 랜딩페이지
+  ============================================================
+  상태: 콘텐츠/구조 확정, 디테일(폰트 렌더링·간격·여백) 다듬는 단계
+
+  디자인 시스템
+  - 배경: #FAFAF6 (오프화이트)  /  잉크: #14150F  /  포인트: #C8F31D (라임그린)
+  - 톤: 정부지원사업 느낌 X, 신뢰감 있는 민간 캠페인 + 로컬(태화동)의 친근함
+  - 비주얼 레퍼런스: 종이를 손으로 대충 자른 듯한 핸드메이드 컷아웃 (성수동 팝업스토어 무드)
+    → 정교한 일러스트나 네온 글로우 효과는 의도적으로 배제함. 거친 손그림 윤곽선이 핵심.
+  - 폰트: Pretendard (구글폰트 CDN, 샌드박스 환경에선 네트워크 차단으로 시스템 폰트 대체됨 —
+    Claude Design/실배포 환경에서는 정상 로딩 확인 필요)
+
+  8개 섹션 구조 (요구사항명세서 5.1 기준)
+  1. 히어로 — 메인카피 + 종이컷아웃 OPEN 사인(흔들림 애니메이션) + 1차 CTA
+  2. 캠프소개 — 모집요강 테이블 + 창업분야 칩
+  3. 프로세스 — OT→캠프→최종선발 3단계만 (참가팀모집/지원프로그램/성과공유회는
+     2번·4번 섹션과 중복되어 의도적으로 제외함)
+  4. 오픈준비지원 — 1년 월세 지원(금액보다 "기간"을 메인 메시지로) + 멘토링/브랜딩/공간설계 카드
+  5. 참고사례 — 가로 스크롤 카드 (도시외양간/리틀티가든/옛간)
+  6. 협력파트너 — 가로 스크롤 캐러셀, 정보카드 다음에 레퍼런스 이미지 슬라이드 배치
+  7. 신청자격/제출항목 — 번호 리스트 + 장소 미정 안내
+  8. FAQ + 최종CTA + 푸터 + 하단 고정 CTA
+
+  확정된 핵심 정보
+  - 신청기간: 2026.06.29 — 07.29 / 캠프: 2026.08.08(토) 09:30-20:00 / OT: 2026.08.03(월)
+  - 캠프장소: 미정 (추후 공지로 명시) / 운영사명: BLANK / 신청폼 URL: 미정 (변수로 분리해둠)
+
+  남은 작업 (TODO)
+  - 신청 폼 URL 확정 후 APPLY_FORM_URL 교체 (하단 <script> 참조)
+  - 참고사례 3곳·BLANK·C-CLEF 레퍼런스 실제 이미지 자산 교체 (현재 placeholder)
+  - 폰트/줄간격/자간 등 디테일 미세조정
+  ============================================================
+-->
+
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>리부트 울산 · 태화동 내 가게</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800;900&display=swap');
+
+  :root{
+    --bg: #FAFAF6;
+    --ink: #14150F;
+    --lime: #C8F31D;
+    --lime-deep: #9FC400;
+    --grey: #8C8C84;
+    --line: rgba(20,21,15,0.12);
+    --card: #F1F0E8;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family: 'Pretendard', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  .frame{ max-width: 430px; margin: 0 auto; position: relative; padding-bottom: 90px; }
+
+  /* ===== shared ===== */
+  .section{ padding: 56px 24px 0; }
+  .section-label{
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: var(--grey);
+    display:flex; align-items:center; gap:8px; margin-bottom: 14px;
+  }
+  .section-label::before{ content:''; width:14px; height:3px; background:var(--lime-deep); display:inline-block; }
+  .section-title{ font-size: 28px; font-weight: 800; line-height: 1.3; letter-spacing: -0.015em; margin-bottom: 10px; }
+  .section-title .hl{ background: var(--lime); padding: 2px 8px; border-radius: 2px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+  .section-desc{ font-size: 14px; line-height: 1.65; color: #58584F; margin-bottom: 28px; }
+  .divider{ height: 1px; background: var(--line); margin: 56px 24px 0; }
+
+  /* ===== 1. HERO ===== */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 20px 24px 0;
+    font-size: 12px; letter-spacing: 0.06em; color: var(--grey); font-weight:600;
+  }
+  .topbar .dot{ width:7px; height:7px; border-radius:50%; background:var(--lime-deep); display:inline-block; margin-right:6px; border:1.5px solid var(--ink); }
+  .eyebrow{
+    margin: 30px 24px 0; font-size: 13px; font-weight: 800; letter-spacing: 0.04em; color: var(--ink);
+    display:flex; align-items:center; gap:8px;
+  }
+  .eyebrow::before{ content:''; width:18px; height:3px; background:var(--lime-deep); display:inline-block; }
+  h1{ margin: 22px 24px 0; font-size: 56px; font-weight: 900; line-height: 1.22; letter-spacing: -0.02em; }
+  h1 .sub{ display:block; font-size: 56px; margin-top: 4px; }
+  h1 .sub .hl{ background: var(--lime); padding: 4px 10px 8px; border-radius: 2px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+  .tagline{ margin: 26px 24px 0; font-size: 15px; line-height: 1.65; color: #58584F; max-width: 290px; }
+  .benefit-line{
+    margin: 16px 24px 0; font-size: 13.5px; font-weight: 600; color: var(--ink);
+    background: rgba(200,243,29,0.35); display:inline-block; padding: 9px 14px; border-radius: 8px;
+    margin-left: 24px; line-height: 1.5;
+  }
+  .benefit-line b{ font-weight: 800; }
+  .visual{ position: relative; margin: 38px 0 0; height: 240px; }
+  .visual svg{ position:absolute; inset:0; width:100%; height:100%; }
+  .badge-period{
+    position:absolute; left: 24px; top: 14px; background: var(--ink); color: var(--lime);
+    font-weight: 800; font-size: 13px; padding: 8px 14px; letter-spacing: -0.01em; z-index: 2;
+  }
+  .info-strip{
+    margin: 0 24px; border-top: 1.5px solid var(--ink); border-bottom: 1.5px solid var(--ink);
+    padding: 18px 0; display:flex; justify-content: space-between; gap: 4px;
+  }
+  .info-strip .item{ font-size:11px; color:var(--grey); }
+  .info-strip .item b{ display:block; color:var(--ink); font-size:15px; font-weight:800; margin-top:5px; white-space:nowrap; }
+  .info-strip .item.dday b{ color: var(--lime-deep); }
+  .tag-section{ margin: 30px 24px 0; }
+  .tag-label{ font-size: 11px; font-weight: 700; color: var(--grey); letter-spacing: 0.08em; margin-bottom: 12px; }
+  .chips{ display:flex; gap:10px; flex-wrap:wrap; }
+  .chip{ border:1.5px solid var(--ink); color: var(--ink); font-size: 13.5px; font-weight: 600; padding: 9px 18px; border-radius: 100px; }
+  .chip.active{ background: var(--lime); border-color: var(--ink); }
+  .cta-hero{
+    margin: 40px 24px 0; background: var(--ink); color: var(--lime); text-align:center;
+    font-weight: 800; font-size: 17px; padding: 19px 0; border-radius: 100px; letter-spacing: -0.01em;
+  }
+
+  /* ===== 2. CAMP INTRO ===== */
+  .summary-table{ border: 1.5px solid var(--ink); border-radius: 12px; overflow: hidden; }
+  .summary-row{ display:flex; border-bottom: 1px solid var(--line); }
+  .summary-row:last-child{ border-bottom: none; }
+  .summary-row .k{ width: 110px; padding: 16px 14px; font-size: 13px; color: var(--grey); font-weight: 600; background: var(--card); border-right: 1px solid var(--line); flex-shrink:0; }
+  .summary-row .v{ padding: 16px 14px; font-size: 14px; font-weight: 700; line-height: 1.5; }
+
+  /* ===== 3. TIMELINE ===== */
+  .timeline{ position: relative; padding-left: 28px; }
+  .timeline::before{ content:''; position:absolute; left: 7px; top: 6px; bottom: 6px; width: 2px; background: var(--line); }
+  .tl-item{ position: relative; padding-bottom: 32px; }
+  .tl-item:last-child{ padding-bottom: 0; }
+  .tl-dot{ position:absolute; left: -28px; top: 2px; width: 16px; height: 16px; border-radius: 50%; background: var(--lime); border: 2px solid var(--ink); }
+  .tl-date{ font-size: 12px; font-weight: 700; color: var(--lime-deep); margin-bottom: 4px; }
+  .tl-title{ font-size: 17px; font-weight: 800; margin-bottom: 6px; }
+  .tl-desc{ font-size: 13.5px; color: #58584F; line-height: 1.6; }
+
+  /* ===== 4. SUPPORT ===== */
+  .support-banner{
+    background: var(--ink); color: var(--bg); border-radius: 16px; padding: 28px 22px; margin-bottom: 14px;
+  }
+  .support-banner .big{ font-size: 32px; font-weight: 900; color: var(--lime); line-height: 1.15; }
+  .support-banner .amount{ font-size: 14px; font-weight: 700; color: #D8D8C0; margin-top: 6px; }
+  .support-banner .small{ font-size: 13px; color: #B8B8AE; margin-top: 12px; line-height: 1.6; }
+  .support-grid{ display:flex; flex-wrap: wrap; gap: 10px; }
+  .support-card{ flex: 0 0 calc(33.33% - 7px); box-sizing: border-box; border: 1.5px solid var(--ink); border-radius: 12px; padding: 14px 10px; }
+  .support-period{
+    display:flex; align-items:center; gap:8px; font-size: 12px; font-weight: 700; color: var(--grey);
+    letter-spacing: 0.02em; margin-bottom: 12px;
+  }
+  .support-period .dot{ width:7px; height:7px; border-radius:50%; background: var(--lime-deep); display:inline-block; flex-shrink:0; }
+  .support-card.wide{ flex: 0 0 100%; }
+  .icon-svg{ width: 22px; height: 22px; margin-bottom: 10px; display:block; }
+  .support-card .t{ font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .support-card .d{ font-size: 11px; color: var(--grey); line-height: 1.45; }
+
+  /* ===== 5. CASES ===== */
+  .case-scroll{ display:flex; gap: 14px; overflow-x: auto; padding-bottom: 10px; margin: 0 -24px; padding-left: 24px; padding-right: 24px; -webkit-overflow-scrolling: touch; }
+  .case-scroll::after{ content:''; flex: 0 0 1px; }
+  .case-card{ flex: 0 0 200px; border: 1.5px solid var(--ink); border-radius: 14px; overflow: hidden; background: var(--bg); }
+  .case-img{ height: 120px; background: var(--card); display:flex; align-items:center; justify-content:center; font-size: 12px; color: var(--grey); border-bottom: 1.5px solid var(--ink); }
+  .case-body{ padding: 14px; }
+  .case-tag{ display:inline-block; font-size: 11px; font-weight: 700; color: var(--lime-deep); background: rgba(200,243,29,0.25); padding: 3px 8px; border-radius: 100px; margin-bottom: 8px; }
+  .case-name{ font-size: 15px; font-weight: 800; margin-bottom: 4px; }
+  .case-desc{ font-size: 12.5px; color: var(--grey); line-height: 1.5; }
+
+  /* ===== 6. PARTNERS ===== */
+  .partner-scroll{
+    display:flex; gap: 12px; overflow-x: auto; padding-bottom: 10px;
+    margin: 0 -24px; padding-left: 24px; padding-right: 24px;
+    scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+  }
+  .partner-scroll::after{ content:''; flex: 0 0 1px; }
+  .partner-slide{
+    flex: 0 0 200px; scroll-snap-align: start; border: 1.5px solid var(--ink); border-radius: 14px;
+    box-sizing: border-box; overflow: hidden; background: var(--bg);
+  }
+  .partner-slide .partner-info{ padding: 20px 16px; text-align:left; }
+  .partner-slide .mark{ width: 40px; height: 40px; border-radius: 50%; background: var(--ink); margin-bottom: 14px; display:flex; align-items:center; justify-content:center; color: var(--lime); font-weight: 800; font-size: 14px; }
+  .partner-slide .role{ font-size: 11px; color: var(--grey); font-weight: 600; margin-bottom: 4px; }
+  .partner-slide .name{ font-size: 15px; font-weight: 800; margin-bottom: 8px; }
+  .partner-slide .desc{ font-size: 12px; color: var(--grey); line-height: 1.5; }
+  .partner-slide.ref{ background: var(--card); display:flex; flex-direction:column; }
+  .partner-slide.ref .ref-label{ font-size: 11px; font-weight: 700; color: var(--lime-deep); padding: 14px 16px 0; }
+  .partner-slide.ref .ref-img{
+    flex:1; margin: 10px 12px 12px; border-radius: 8px; border: 1px dashed var(--grey);
+    display:flex; align-items:center; justify-content:center; font-size: 12px; color: var(--grey); min-height: 110px;
+  }
+
+  /* ===== 7. ELIGIBILITY ===== */
+  .req-list{ display:flex; flex-direction:column; gap: 10px; }
+  .req-item{ display:flex; gap: 12px; align-items:flex-start; padding: 14px; background: var(--card); border-radius: 10px; }
+  .req-num{ font-size: 13px; font-weight: 800; color: var(--ink); background: var(--lime); width: 24px; height: 24px; border-radius: 50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .req-text{ font-size: 13.5px; line-height: 1.55; padding-top: 2px; }
+  .req-text b{ font-weight: 700; }
+  .note-box{ margin-top: 20px; padding: 14px; border: 1px dashed var(--grey); border-radius: 10px; font-size: 12px; color: var(--grey); line-height: 1.6; }
+
+  /* ===== 8. FAQ + FOOTER ===== */
+  .faq-item{ border-bottom: 1px solid var(--line); padding: 16px 0; }
+  .faq-q{ font-size: 14.5px; font-weight: 700; display:flex; justify-content:space-between; align-items:center; }
+  .faq-q .plus{ color: var(--lime-deep); font-weight: 800; }
+  .faq-a{ font-size: 13px; color: var(--grey); line-height: 1.6; margin-top: 10px; }
+
+  .final-cta-box{
+    margin: 56px 24px 0; background: var(--lime); border-radius: 20px; padding: 32px 24px; text-align:center;
+  }
+  .final-cta-box .t{ font-size: 22px; font-weight: 900; line-height: 1.3; margin-bottom: 8px; }
+  .final-cta-box .d{ font-size: 13px; color: #3a3d22; margin-bottom: 20px; }
+  .final-cta-box .btn{ background: var(--ink); color: var(--lime); font-weight: 800; font-size: 16px; padding: 16px 0; border-radius: 100px; }
+
+  footer{ margin-top: 56px; padding: 32px 24px 24px; border-top: 1px solid var(--line); }
+  .footer-logos{ display:flex; gap: 20px; align-items:center; margin-bottom: 20px; font-size: 12px; color: var(--grey); font-weight: 700; }
+  .footer-info{ font-size: 11.5px; color: var(--grey); line-height: 1.8; }
+  .footer-info .row{ display:flex; gap: 8px; }
+  .footer-info .row span:first-child{ color: #B0B0A6; min-width: 60px; }
+
+  /* sticky CTA */
+  .sticky-cta{
+    position: fixed; bottom: 0; left: 0; right: 0; max-width: 430px; margin: 0 auto;
+    background: var(--ink); padding: 14px 20px; display:flex; align-items:center; justify-content:space-between;
+    z-index: 10;
+  }
+  .sticky-cta .txt{ color: var(--bg); font-size: 13px; }
+  .sticky-cta .txt b{ color: var(--lime); display:block; font-size: 14px; }
+  .sticky-cta .btn{ background: var(--lime); color: var(--ink); font-weight: 800; font-size: 14px; padding: 12px 22px; border-radius: 100px; }
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <!-- ============ 1. HERO ============ -->
+  <div class="topbar"><span><span class="dot"></span>REBOOT ULSAN</span><span>LOCAL STARTUP CAMP</span></div>
+  <div class="eyebrow">언젠가가 아니라, 올해</div>
+  <h1>태화동<span class="sub"><span class="hl">내 가게</span></span></h1>
+  <p class="tagline">올해 안에, 진짜 내 가게를 엽니다.<br>태화동에서 카페·식당·베이커리·브랜드를 시작할 예비 창업가 10팀을 모집합니다.</p>
+  <div class="benefit-line">✦ 최종 선발 3팀에는 <b>1년 월세를 지원</b>합니다</div>
+
+  <div class="visual" style="height:260px;">
+    <div class="badge-period">신청 06.29 — 07.29</div>
+    <svg viewBox="0 0 430 250" xmlns="http://www.w3.org/2000/svg">
+      <!-- nail -->
+      <circle cx="215" cy="32" r="4" fill="#14150F"/>
+
+      <g class="paper-sway">
+        <!-- hand drawn strings, wobbly -->
+        <path d="M206 35 Q197 50 190 64 Q186 72 182 80" stroke="#14150F" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M224 35 Q233 51 240 65 Q244 73 248 81" stroke="#14150F" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+        <!-- black backing paper, rotated slightly -->
+        <path d="M135 88 Q165 79 195 87 Q225 78 255 88 Q275 83 288 95 Q285 128 280 155 Q248 163 218 156 Q188 164 160 157 Q138 132 135 88 Z"
+              fill="#14150F" transform="rotate(-2.5 211 122)"/>
+
+        <!-- lime paper on top, rotated opposite -->
+        <path d="M142 92 Q170 84 198 91 Q226 83 254 92 Q272 88 283 99 Q280 127 276 150 Q247 157 219 151 Q191 158 165 152 Q145 130 142 92 Z"
+              fill="#C8F31D" stroke="#14150F" stroke-width="3" stroke-linejoin="round" transform="rotate(2 213 122)"/>
+
+        <!-- hand-drawn OPEN lettering -->
+        <g transform="rotate(2 213 122)" stroke="#14150F" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M165 126 Q162 113 174 110 Q187 108 189 123 Q190 137 177 139 Q164 140 165 126 Z"/>
+          <path d="M199 109 Q197 128 196 142"/>
+          <path d="M197 110 Q214 107 215 117 Q216 126 197 125"/>
+          <path d="M224 111 L222 140"/>
+          <path d="M225 110 L240 109"/>
+          <path d="M223 125 L235 124"/>
+          <path d="M222 140 L238 138"/>
+          <path d="M246 138 L248 109"/>
+          <path d="M248 109 L264 137"/>
+          <path d="M265 135 L267 107"/>
+        </g>
+
+        <text x="213" y="185" text-anchor="middle" font-family="Pretendard" font-weight="700" font-size="12" fill="#14150F" transform="rotate(2 213 185)">태화동에서, 다시</text>
+      </g>
+
+      <!-- ground line -->
+      <line x1="20" y1="220" x2="410" y2="220" stroke="#14150F" stroke-width="1.6"/>
+
+      <!-- location pin, top right -->
+      <circle cx="375" cy="40" r="8" fill="#14150F"/>
+      <circle cx="375" cy="40" r="2.7" fill="#C8F31D"/>
+      <line x1="360" y1="46" x2="320" y2="68" stroke="#14150F" stroke-width="1.4" stroke-dasharray="3,3"/>
+      <text x="375" y="22" text-anchor="middle" font-family="Pretendard" font-weight="700" font-size="10" fill="#8C8C84">태화동 일대</text>
+    </svg>
+  </div>
+
+  <style>
+    @keyframes paperSway {
+      0%, 100% { transform: rotate(-2deg); }
+      50% { transform: rotate(2deg); }
+    }
+    .paper-sway { transform-origin: 215px 32px; animation: paperSway 3.4s ease-in-out infinite; }
+    @media (prefers-reduced-motion: reduce) {
+      .paper-sway { animation: none; }
+    }
+  </style>
+
+
+  <div class="info-strip">
+    <div class="item">모집규모<b>10팀</b></div>
+    <div class="item">최종선발<b>3팀</b></div>
+    <div class="item">캠프일자<b>8.08(토)</b></div>
+    <div class="item dday">신청마감<b>D-37</b></div>
+  </div>
+
+  <div class="cta-hero" onclick="goToApplyForm()">지금 신청하기 →</div>
+
+  <div class="divider"></div>
+
+  <!-- ============ 2. 캠프 소개 ============ -->
+  <div class="section">
+    <div class="section-label">CAMP INTRO</div>
+    <div class="section-title">언젠가가 아니라,<br><span class="hl">올해</span> 태화동에서</div>
+    <p class="section-desc">2026년 안에 태화동에서 가게를 열고 싶은 예비 창업가를 위한 로컬 창업캠프입니다. 모집부터 최종 선발까지, 아래 요강을 확인해주세요.</p>
+
+    <div class="tag-section" style="margin: 0 0 24px;">
+      <div class="tag-label">창업 분야</div>
+      <div class="chips">
+        <div class="chip active">카페</div>
+        <div class="chip">식당</div>
+        <div class="chip">베이커리</div>
+        <div class="chip">브랜드</div>
+      </div>
+    </div>
+
+    <div class="summary-table">
+      <div class="summary-row"><div class="k">모집대상</div><div class="v">태화동 로컬 창업 희망자<br>(카페·식당·베이커리·브랜드)</div></div>
+      <div class="summary-row"><div class="k">모집규모</div><div class="v">참가 10팀 → 캠프 당일 최종 3팀 선발</div></div>
+      <div class="summary-row"><div class="k">신청기간</div><div class="v">2026.06.29 — 07.29</div></div>
+      <div class="summary-row"><div class="k">캠프장소</div><div class="v">추후 공지 <span style="color:var(--grey); font-weight:500;">(장소 확정 예정)</span></div></div>
+      <div class="summary-row"><div class="k">캠프일정</div><div class="v">2026.08.08(토) 09:30–20:00</div></div>
+      <div class="summary-row"><div class="k">사업기간</div><div class="v">2026.07 — 12</div></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ============ 3. 프로세스 타임라인 ============ -->
+  <div class="section">
+    <div class="section-label">PROCESS</div>
+    <div class="section-title">캠프 당일,<br>이렇게 진행됩니다</div>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">2026.08.03(월)</div>
+        <div class="tl-title">온라인 OT</div>
+        <div class="tl-desc">프로젝트·멘토 소개, 태화동 상권 브리핑이 진행됩니다.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">2026.08.08(토) 09:30–20:00</div>
+        <div class="tl-title">창업캠프 (본캠프)</div>
+        <div class="tl-desc">태화동 라운딩, 멘토링, 사업계획 디벨롭, 발표 및 심사가 하루 동안 진행됩니다.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">2026.08.08(토)</div>
+        <div class="tl-title">최종 3팀 선발</div>
+        <div class="tl-desc">캠프 당일 심사를 통해 최종 3팀이 발표·수상합니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ============ 4. 오픈 준비 지원 ============ -->
+  <div class="section">
+    <div class="section-label">SUPPORT</div>
+    <div class="section-title">드디어, <span class="hl">내 가게</span><br>오픈 준비</div>
+    <p class="section-desc">최종 선발된 3팀에게는 실제 오픈까지 필요한 지원이 제공됩니다.</p>
+
+    <div class="support-banner">
+      <div class="big">1년 월세 지원</div>
+      <div class="amount">최대 600만 원 (12개월분)</div>
+      <div class="small">연내 태화동 일대 사업자등록을 완료하면, 최종 선발 3팀에 한해 1년치 월세를 지원합니다.</div>
+    </div>
+
+    <div class="support-period">
+      <span class="dot"></span>2026.08 — 09 · 창업 지원 프로그램
+    </div>
+    <div class="support-grid">
+      <div class="support-card">
+        <svg class="icon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="8" cy="8" r="3.2" stroke="#14150F" stroke-width="1.6"/>
+          <path d="M2.5 19c0-3 2.5-5.2 5.5-5.2s5.5 2.2 5.5 5.2" stroke="#14150F" stroke-width="1.6" stroke-linecap="round"/>
+          <circle cx="17" cy="7" r="2.4" stroke="#14150F" stroke-width="1.6"/>
+          <path d="M14.5 13.2c.7-.3 1.5-.5 2.5-.5 2.6 0 4.7 1.9 4.7 4.4" stroke="#14150F" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <div class="t">멘토링</div><div class="d">현업 로컬 창업가의 사업화 심화 멘토링</div>
+      </div>
+      <div class="support-card">
+        <svg class="icon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M11.5 3.5h5a2 2 0 012 2v5a2 2 0 01-.6 1.4l-8 8a2 2 0 01-2.8 0l-5.5-5.5a2 2 0 010-2.8l8-8a2 2 0 011.4-.1z" stroke="#14150F" stroke-width="1.6" stroke-linejoin="round"/>
+          <circle cx="15.5" cy="8.5" r="1.6" stroke="#14150F" stroke-width="1.6"/>
+        </svg>
+        <div class="t">브랜딩 개발</div><div class="d">브랜드 상징(브랜딩) 개발 지원</div>
+      </div>
+      <div class="support-card">
+        <svg class="icon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 21V9.5L12 4l9 5.5V21" stroke="#14150F" stroke-width="1.6" stroke-linejoin="round"/>
+          <path d="M8 21v-7h8v7" stroke="#14150F" stroke-width="1.6" stroke-linejoin="round"/>
+          <path d="M3 9.5h18" stroke="#14150F" stroke-width="1.6"/>
+        </svg>
+        <div class="t">공간 설계</div><div class="d">창업 공간 설계 컨설팅</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ============ 5. 참고 사례 ============ -->
+  <div class="section" style="padding-right:0;">
+    <div class="section-label" style="padding-right:24px;">REFERENCE</div>
+    <div class="section-title" style="padding-right:24px;">먼저 가게를<br>연 사람들</div>
+    <p class="section-desc" style="padding-right:24px;">태화동에서 먼저 시작한 로컬 창업가들의 이야기입니다.</p>
+
+    <div class="case-scroll">
+      <div class="case-card">
+        <div class="case-img">사진 영역</div>
+        <div class="case-body">
+          <div class="case-tag">로컬 다이닝</div>
+          <div class="case-name">도시외양간</div>
+          <div class="case-desc">태화동의 정서를 담은 로컬 다이닝 공간</div>
+        </div>
+      </div>
+      <div class="case-card">
+        <div class="case-img">사진 영역</div>
+        <div class="case-body">
+          <div class="case-tag">티하우스</div>
+          <div class="case-name">리틀티가든</div>
+          <div class="case-desc">차 한 잔으로 동네에 쉼을 더하는 공간</div>
+        </div>
+      </div>
+      <div class="case-card">
+        <div class="case-img">사진 영역</div>
+        <div class="case-body">
+          <div class="case-tag">참기름 브랜드</div>
+          <div class="case-name">옛간</div>
+          <div class="case-desc">전통과 로컬을 잇는 브랜드</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ============ 6. 협력 파트너 ============ -->
+  <div class="section" style="padding-right:0;">
+    <div class="section-label" style="padding-right:24px;">PARTNERS</div>
+    <div class="section-title" style="padding-right:24px;">브랜드와 공간을<br>함께 만듭니다</div>
+    <p class="section-desc" style="padding-right:24px;">최종 선발팀의 브랜딩과 공간 설계를 함께할 협력사입니다. 옆으로 넘겨 작업 사례를 확인하세요.</p>
+
+    <div class="partner-scroll">
+      <div class="partner-slide">
+        <div class="partner-info">
+          <div class="mark">B</div>
+          <div class="role">공간설계</div>
+          <div class="name">BLANK 건축사무소</div>
+          <div class="desc">가게의 공간을 기획하고 설계하는 건축사무소</div>
+        </div>
+      </div>
+      <div class="partner-slide ref">
+        <div class="ref-label">공간설계 레퍼런스</div>
+        <div class="ref-img">이미지 영역</div>
+      </div>
+      <div class="partner-slide">
+        <div class="partner-info">
+          <div class="mark">C</div>
+          <div class="role">브랜딩</div>
+          <div class="name">C-CLEF</div>
+          <div class="desc">가게의 이름과 얼굴을 만드는 디자인 스튜디오</div>
+        </div>
+      </div>
+      <div class="partner-slide ref">
+        <div class="ref-label">브랜딩 레퍼런스</div>
+        <div class="ref-img">이미지 영역</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ============ 7. 신청 자격 / 제출 항목 ============ -->
+  <div class="section">
+    <div class="section-label">ELIGIBILITY</div>
+    <div class="section-title">신청 자격 &<br>제출 항목</div>
+    <p class="section-desc">신청 전 아래 항목을 미리 준비해주세요. 실제 입력은 외부 신청 폼에서 진행됩니다.</p>
+
+    <div class="req-list">
+      <div class="req-item"><div class="req-num">1</div><div class="req-text"><b>기본 정보</b> — 팀명(가게명), 대표자 성명, 연락처, 이메일, 업종</div></div>
+      <div class="req-item"><div class="req-num">2</div><div class="req-text"><b>아이템 소개</b> — 메뉴/제품/서비스 개요, 한 줄 소개</div></div>
+      <div class="req-item"><div class="req-num">3</div><div class="req-text"><b>사업계획서</b> — 아이템 상세, 희망 위치, 운영 형태, 차별점, 자금 계획</div></div>
+      <div class="req-item"><div class="req-num">4</div><div class="req-text"><b>증빙/첨부</b> — 사업계획서 파일(PDF/PPT), 참고 이미지(선택)</div></div>
+      <div class="req-item"><div class="req-num">5</div><div class="req-text"><b>기타</b> — 개인정보 수집·이용 동의, 8.08(토) 종일 참가 가능 여부 확인</div></div>
+    </div>
+
+    <div class="note-box">※ 창업캠프(본캠프) 장소는 추후 별도 공지됩니다. 신청 일정(06.29—07.29)은 확정되었습니다.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ============ 8. FAQ ============ -->
+  <div class="section">
+    <div class="section-label">FAQ</div>
+    <div class="section-title">자주 묻는 질문</div>
+
+    <div class="faq-item">
+      <div class="faq-q">신청은 어떻게 하나요? <span class="plus">+</span></div>
+      <div class="faq-a">하단 '신청하기' 버튼을 누르면 외부 신청 폼(구글폼)으로 이동합니다. 새 탭에서 정보를 입력 후 제출해주세요.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">꼭 태화동 거주자만 신청할 수 있나요? <span class="plus">+</span></div>
+      <div class="faq-a">아니요. 연내 태화동 일대에 사업자등록을 완료할 의지가 있는 예비 창업가라면 누구나 신청 가능합니다.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">최종 3팀에 선발되지 않으면 어떻게 되나요? <span class="plus">+</span></div>
+      <div class="faq-a">캠프 자체(멘토링, 상권 브리핑 등)는 참가 10팀 모두 동일하게 경험하며, 월세 지원 등 사후 프로그램은 최종 선발 3팀에 한해 제공됩니다.</div>
+    </div>
+  </div>
+
+  <!-- ============ FINAL CTA ============ -->
+  <div class="final-cta-box">
+    <div class="t">올해, 태화동에서<br>내 가게를 시작하세요</div>
+    <div class="d">신청 마감 07.29 — 지금 신청하세요</div>
+    <div class="btn" onclick="goToApplyForm()">지금 신청하기 →</div>
+  </div>
+
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    <div class="footer-logos"><span>후원 · 현대해상</span><span>운영 · BLANK</span></div>
+    <div class="footer-info">
+      <div class="row"><span>주최</span><span>리부트 울산 로컬 창업캠프</span></div>
+      <div class="row"><span>대상지역</span><span>울산광역시 중구 태화동 일대</span></div>
+      <div class="row"><span>캠프장소</span><span>추후 공지 (장소 확정 예정)</span></div>
+      <div class="row"><span>문의</span><span>운영사무국 (문의처 확정 예정)</span></div>
+    </div>
+  </footer>
+
+  <div class="sticky-cta">
+    <div class="txt">신청마감 D-37<b>07.29까지</b></div>
+    <div class="btn" onclick="goToApplyForm()">신청하기</div>
+  </div>
+
+  <script>
+    // FR-12: 신청 폼 URL을 한 곳에서 관리. 폼이 확정되면 이 값만 교체하면 전체 페이지의 모든 CTA가 갱신됩니다.
+    const APPLY_FORM_URL = "https://forms.gle/REPLACE_WITH_ACTUAL_FORM_URL"; // TODO: 구글폼(또는 외부 폼) URL 확정 시 교체
+
+    function goToApplyForm(){
+      if (!APPLY_FORM_URL || APPLY_FORM_URL.includes("REPLACE_WITH_ACTUAL_FORM_URL")) {
+        alert("신청 폼 URL이 아직 등록되지 않았습니다. 운영팀 확인 후 연결됩니다.");
+        return;
+      }
+      window.open(APPLY_FORM_URL, "_blank", "noopener,noreferrer");
+    }
+  </script>
+
+</div>
+</body>
+</html>
